@@ -156,6 +156,7 @@ class Corpus:
         else:
             from gensim.models import KeyedVectors
             embeddings = KeyedVectors.load_word2vec_format(file_path)
+        print('Embeddings are loaded')
         return embeddings
 
     def tokens_to_x_and_xc(self, tokens):
