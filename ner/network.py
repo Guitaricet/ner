@@ -277,6 +277,7 @@ class NER:
         y_true_list = list()
         y_pred_list = list()
         print('Eval on {}:'.format(dataset_type))
+        # gt for ground truth
         for x, y_gt in self.corpus.batch_generator(batch_size=32, dataset_type=dataset_type):
             y_pred = self.predict(x)
             y_gt = self.corpus.tag_dict.batch_idxs2batch_toks(y_gt, filter_paddings=True)

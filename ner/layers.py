@@ -75,8 +75,8 @@ def dense_convolutional_network(input_units,
         units = tf.layers.conv1d(total_units,
                                  n_filters,
                                  filter_width,
-                                 dilation_rate=dilation_rate,
                                  padding='same',
+                                 dilation_rate=dilation_rate,
                                  kernel_initializer=xavier_initializer())
         if use_batch_norm:
             units = tf.layers.batch_normalization(units, training=training_ph)
