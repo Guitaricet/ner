@@ -134,4 +134,4 @@ if __name__ == '__main__':
         logging.info('Saving results...')
         pd.DataFrame(results_all).to_csv(args.results_filename)
 
-    logging.info('Total execution time: %s min' % (time() - time_total) // 60)
+    logging.info('Total execution time: %s min' % (((time() - time_total) // 60))
