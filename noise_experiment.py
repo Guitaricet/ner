@@ -32,10 +32,10 @@ NOISE_LEVELS = [0, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str)
-# parser.add_argument('--gpu', default=False, action='store_true')
 parser.add_argument('--epochs', type=int, default=5)
 parser.add_argument('--embeddings', type=str, default=None, help='path to fasttext embeddings')
 parser.add_argument('--results-filename', type=str, default='noise_experiment_results.csv')
+# parser.add_argument('--gpu', default=False, action='store_true')
 # parser.add_argument('--use-capitalization', default=False, action='store_true')
 
 
