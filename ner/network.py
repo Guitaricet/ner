@@ -40,6 +40,7 @@ class NER:
                  token_embeddings_dim=128,
                  char_embeddings_dim=50,
                  use_char_embeddins=True,
+                 char_embeddings_type='cnn',
                  pretrained_model_filepath=None,
                  embeddings_dropout=False,
                  dense_dropout=False,
@@ -89,6 +90,7 @@ class NER:
                     c_emb = character_embedding_network(x_char,
                                                         n_characters=n_chars,
                                                         char_embedding_dim=char_embeddings_dim,
+                                                        network_type=char_embeddings_type,
                                                         filter_width=char_filter_width)
                     emb = tf.concat([w_emb, c_emb], axis=-1)
                 else:

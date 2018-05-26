@@ -200,7 +200,7 @@ def embedding_layer(input_placeholder=None,
     return embeddings
 
 
-def character_embedding_network(char_placeholder, n_characters, char_embedding_dim, filter_width=7):
+def character_embedding_network(char_placeholder, n_characters, char_embedding_dim, filter_width=7, network_type='cnn'):
     char_emb_mat = np.random.randn(n_characters, char_embedding_dim).astype(np.float32) / np.sqrt(char_embedding_dim)
     char_emb_var = tf.Variable(char_emb_mat, trainable=True)
     with tf.variable_scope('Char_Emb_Network'):
@@ -208,8 +208,13 @@ def character_embedding_network(char_placeholder, n_characters, char_embedding_d
         c_emb = tf.nn.embedding_lookup(char_emb_var, char_placeholder)
 
         # Character embedding network
-        char_conv = tf.layers.conv2d(c_emb, char_embedding_dim, (1, filter_width), padding='same', name='char_conv')
-        char_emb = tf.reduce_max(char_conv, axis=2)
+        if network_type == 'cnn':
+            char_conv = tf.layers.conv2d(c_emb, char_embedding_dim, (1, filter_width), padding='same', name='char_conv')
+            char_emb = tf.reduce_max(char_conv, axis=2)
+        elif network_type == 'lstm' or network_type == 'gru':
+            char_emb = stacked_rnn(c_emb, 1, cell_type=network_type)
+        else:
+            raise RuntimeError('network_type must be cnn, gru or lstm')
     return char_emb
 
 

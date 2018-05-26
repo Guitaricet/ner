@@ -36,6 +36,7 @@ parser.add_argument('--epochs', type=int, default=5)
 parser.add_argument('--embeddings', type=str, default=None, help='path to fasttext embeddings')
 parser.add_argument('--results-filename', type=str, default='noise_experiment_results.csv')
 parser.add_argument('--no-char-embeddings', default=False, action='store_true')
+parser.add_argument('--char-embeddings-type', sype=str, default='cnn')
 # parser.add_argument('--gpu', default=False, action='store_true')
 # parser.add_argument('--use-capitalization', default=False, action='store_true')
 
@@ -103,6 +104,7 @@ if __name__ == '__main__':
                         ],
                         "token_embeddings_dim": 300,
                         "use_char_embeddins": not args.no_char_embeddings,
+                        "char_embeddings_type": args.char_embeddings_type,
                         "char_embeddings_dim": 25,
                         "use_batch_norm": True,
                         "use_crf": True,
@@ -113,13 +115,13 @@ if __name__ == '__main__':
         net = NER(corp, **model_params)
 
         learning_params = {'dropout_rate': 0.5,
-                           'epochs': 5,
+                           'epochs': args.epochs,
                            'learning_rate': 0.005,
                            'batch_size': 8,
                            'learning_rate_decay': 0.707
                         }
 
-        results = net.fit(epochs=args.epochs, learning_rate=0.005, learning_rate_decay=0.707, batch_size=8, dropout_rate=0.5)
+        results = net.fit(**learning_params)
     
         logging.info('Evaluating the model..')
         results_dict = {'noise_level': noise_level}
