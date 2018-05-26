@@ -66,6 +66,7 @@ class NER:
             x_word = tf.placeholder(dtype=tf.float32, shape=[None, None, corpus.embeddings.vector_size], name='x_word')
         else:
             x_word = tf.placeholder(dtype=tf.int32, shape=[None, None], name='x_word')
+
         if concat_embeddings:
             x_emb = tf.placeholder(dtype=tf.float32, shape=[None, None, corpus.embeddings.vector_size], name='x_word')
         x_char = tf.placeholder(dtype=tf.int32, shape=[None, None, None], name='x_char')
@@ -84,6 +85,7 @@ class NER:
             with tf.variable_scope('Embeddings'):
                 w_emb = embedding_layer(x_word, n_tokens=n_tokens, token_embedding_dim=token_embeddings_dim)
                 if use_char_embeddins:
+                    # Character embeddings
                     c_emb = character_embedding_network(x_char,
                                                         n_characters=n_chars,
                                                         char_embedding_dim=char_embeddings_dim,
