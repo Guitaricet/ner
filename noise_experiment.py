@@ -2,6 +2,7 @@ import logging
 import argparse
 from time import time
 
+import numpy as np
 import pandas as pd
 
 from ner.corpus import Corpus
@@ -27,8 +28,7 @@ logger.setLevel('DEBUG')
 time_total = time()
 
 
-NOISE_LEVELS = [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0]
-
+NOISE_LEVELS = np.concatenate([np.arange(0, 0.05, 0.005), np.arange(0.05, 0.2, 0.01)])
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str)
