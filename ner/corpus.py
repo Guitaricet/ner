@@ -189,9 +189,9 @@ class Corpus:
     def _noise_generator(self, string):
         noised = ""
         for c in string:
-            if random.random() >= self.noise_level:
+            if random.random() > self.noise_level:
                 noised += c
-            if random.random() < self.noise_level:
+            else:
                 noised += random.choice(self.alphabet)
         return noised
 
