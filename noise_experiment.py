@@ -2,6 +2,8 @@ import logging
 import argparse
 from time import time
 
+import pandas as pd
+
 from ner.corpus import Corpus
 from ner.network import NER
 
@@ -33,6 +35,7 @@ parser.add_argument('--dataset', type=str)
 # parser.add_argument('--gpu', default=False, action='store_true')
 parser.add_argument('--epochs', type=int, default=5)
 parser.add_argument('--embeddings', type=str, default=None, help='path to fasttext embeddings')
+parser.add_argument('--results-filename', type=str, default='noise_experiment_results.csv')
 # parser.add_argument('--use-capitalization', default=False, action='store_true')
 
 
@@ -89,6 +92,7 @@ if __name__ == '__main__':
     results_all = []
 
     for noise_level in NOISE_LEVELS:
+        logging.info('Starting training for noise level %s' % noise_level)
         corp.noise_level = noise_level
 
         model_params = {"filter_width": 7,
@@ -115,6 +119,7 @@ if __name__ == '__main__':
 
         results = net.fit(epochs=args.epochs, learning_rate=0.005, learning_rate_decay=0.707, batch_size=8, dropout_rate=0.5)
     
+        logging.info('Evaluating the model..')
         results_dict = {'noise_level': noise_level}
         results_dict.update(model_params)
         results_dict.update(learning_params)
@@ -126,6 +131,7 @@ if __name__ == '__main__':
         results_dict.update({'clean_' + k: v for k, v in results['__total__'].items()})
 
         results_all.append(results_dict)
+        logging.info('Saving results...')
+        pd.DataFrame(results_all).to_csv(args.results_filename)
 
-    import pandas as pd
-    pd.DataFrame(results_all).to_csv('noise_experiment_results.csv')
+    logging.info('Total execution time: %s min' % (time() - time_total) // 60)
