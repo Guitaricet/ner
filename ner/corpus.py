@@ -117,6 +117,7 @@ class Corpus:
             self.tag_dict = Vocabulary(self.get_tags(), is_tags=True)
             self.char_dict = Vocabulary(self.get_characters())
             self.alphabet = list(self.char_dict._t2i.keys())
+            print(self.alphabet)
         elif dicts_filepath is not None:
             self.dataset = None
             self.load_corpus_dicts(dicts_filepath)
@@ -179,15 +180,16 @@ class Corpus:
     def _noise_generator_per_token(self, tokens):
         noised_tokens = []
         for token in tokens:
+            assert len(token) > 0
             noised_token = self._noise_generator(token)
-            assert len(noised_token) >= 1
+            assert len(noised_token) > 0, (token, noised_token)
             noised_tokens.append(noised_token)
         return noised_tokens
 
     def _noise_generator(self, string):
         noised = ""
         for c in string:
-            if random.random() > self.noise_level:
+            if random.random() >= self.noise_level:
                 noised += c
             if random.random() < self.noise_level:
                 noised += random.choice(self.alphabet)

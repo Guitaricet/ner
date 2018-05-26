@@ -52,7 +52,7 @@ def read_data(datapath):
                     tokens.append('#')
                 else:
                     # is you want static noise, add it here
-                    tokens.append(token)
+                    tokens.append(token.lower())
                 tags.append(tag)
             elif len(tokens) > 0:
                 xy_list.append((tokens, tags,))
