@@ -116,7 +116,7 @@ class Corpus:
             self.token_dict = Vocabulary(self.get_tokens())
             self.tag_dict = Vocabulary(self.get_tags(), is_tags=True)
             self.char_dict = Vocabulary(self.get_characters())
-            self.alphabet = list(self.char_dict._t2i.values())
+            self.alphabet = list(self.char_dict._t2i.keys())
         elif dicts_filepath is not None:
             self.dataset = None
             self.load_corpus_dicts(dicts_filepath)
