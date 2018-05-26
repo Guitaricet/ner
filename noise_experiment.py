@@ -36,7 +36,8 @@ parser.add_argument('--epochs', type=int, default=5)
 parser.add_argument('--embeddings', type=str, default=None, help='path to fasttext embeddings')
 parser.add_argument('--results-filename', type=str, default='noise_experiment_results.csv')
 parser.add_argument('--no-char-embeddings', default=False, action='store_true')
-parser.add_argument('--char-embeddings-type', type=str, default='gru')
+parser.add_argument('--char-embeddings-type', type=str, default='cnn')
+parser.add_argument('--network-type', type=str, default='cnn')
 # parser.add_argument('--gpu', default=False, action='store_true')
 # parser.add_argument('--use-capitalization', default=False, action='store_true')
 
@@ -108,7 +109,7 @@ if __name__ == '__main__':
                         "char_embeddings_dim": 25,
                         "use_batch_norm": True,
                         "use_crf": True,
-                        "net_type": 'cnn',
+                        "net_type": args.network_type,
                         "use_capitalization": False,
                     }
 
