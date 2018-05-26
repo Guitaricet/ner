@@ -27,7 +27,7 @@ logger.setLevel('DEBUG')
 time_total = time()
 
 
-NOISE_LEVELS = [0, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2]
+NOISE_LEVELS = [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0]
 
 
 parser = argparse.ArgumentParser()
