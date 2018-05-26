@@ -109,12 +109,14 @@ class Vocabulary:
 
 
 class Corpus:
-    def __init__(self, dataset=None, embeddings_file_path=None, dicts_filepath=None):
+    def __init__(self, dataset=None, embeddings_file_path=None, dicts_filepath=None, noise_level=0):
+        self.noise_level = noise_level
         if dataset is not None:
             self.dataset = dataset
             self.token_dict = Vocabulary(self.get_tokens())
             self.tag_dict = Vocabulary(self.get_tags(), is_tags=True)
             self.char_dict = Vocabulary(self.get_characters())
+            self.alphabet = set(self.char_dict._t2i.values())
         elif dicts_filepath is not None:
             self.dataset = None
             self.load_corpus_dicts(dicts_filepath)
@@ -173,6 +175,23 @@ class Corpus:
         for n, char_line in enumerate(char_idxs):
             chars[0, n, :len(char_line)] = char_line
         return toks, chars
+    
+    def _noise_generator_per_token(self, tokens):
+        noised_tokens = []
+        for token in tokens:
+            noised_token = self._noise_generator(token)
+            assert len(noised_token) >= 1
+            noised_tokens.append(noised_token)
+        return noised_tokens
+
+    def _noise_generator(self, string):
+        noised = ""
+        for c in string:
+            if random.random() > self.noise_level:
+                noised += c
+            if random.random() < self.noise_level:
+                noised += random.choice(self.alphabet)
+        return noised
 
     def batch_generator(self,
                         batch_size,
@@ -192,6 +211,10 @@ class Corpus:
             batch_start = k * batch_size
             batch_end = min((k + 1) * batch_size, n_samples)
             x_batch = [tokens_tags_pairs[ind][0] for ind in order[batch_start: batch_end]]
+            # add noise
+            if self.noise_level > 0:
+                x_batch = [self._noise_generator_per_token(tokens) for tokens in x_batch]
+
             y_batch = [tokens_tags_pairs[ind][1] for ind in order[batch_start: batch_end]]
             x, y = self.tokens_batch_to_numpy_batch(x_batch, y_batch)
             yield x, y
