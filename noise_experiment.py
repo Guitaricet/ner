@@ -67,6 +67,11 @@ def read_data(datapath):
 if __name__ == '__main__':
     args = parser.parse_args()
 
+    logging.info('')
+    logging.info('')
+    logging.info('Starting the script')
+    logging.info('')
+    logging.info('')
     logging.info('Reading the data...')
 
     data_types = ['train', 'test', 'valid']
