@@ -103,6 +103,8 @@ if __name__ == '__main__':
         logging.info('Starting training for noise level %s' % noise_level)
         corp.noise_level = noise_level
 
+        network_type = 'cnn' if args.network_type == 'cnn' else 'rnn'
+
         model_params = {"filter_width": 7,
                         "embeddings_dropout": True,
                         "n_filters": [
@@ -114,7 +116,7 @@ if __name__ == '__main__':
                         "char_embeddings_dim": 25,
                         "use_batch_norm": True,
                         "use_crf": True,
-                        "net_type": args.network_type,
+                        "net_type": network_type,
                         "use_capitalization": False,
                     }
 
@@ -128,7 +130,7 @@ if __name__ == '__main__':
                         }
 
         results = net.fit(**learning_params)
-    
+
         logging.info('Evaluating the model..')
         results_dict = {'noise_level': noise_level}
         results_dict.update(model_params)

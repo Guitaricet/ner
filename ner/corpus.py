@@ -187,6 +187,7 @@ class Corpus:
         return noised_tokens
 
     def _noise_generator(self, string):
+        assert isinstance(string, str)
         noised = ""
         for c in string:
             if random.random() > self.noise_level:
