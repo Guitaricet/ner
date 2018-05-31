@@ -69,6 +69,14 @@ def read_data(datapath):
 if __name__ == '__main__':
     args = parser.parse_args()
 
+    # logging.warning('HARDCODE!!')
+    # args.postag = True
+    # args.embeddings = '~/Downloads/ruscorpora_upos_skipgram_300_5_2018.vec'
+    # args.results_filename = 'test.csv'
+    # args.dataset = 'data/collection5'
+    # args.noise = 0.1
+    # args.embeddings_format = 'word2vec'
+
     if os.path.exists(args.results_filename):
         logging.warning('File at path %s exists' % args.results_filename)
         yes = input('Replace it? (y/n) ')

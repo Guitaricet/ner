@@ -227,7 +227,7 @@ class Corpus:
             # convert to Universal Dependencies POS tag format:
             pos = RNC_2_UNIPOS[pos]
             tagged = lemma+'_'+pos
-        except KeyError as e:
+        except (KeyError, IndexError) as e:
             return word + '_X'  # UNK token
 
         return tagged
@@ -312,14 +312,19 @@ class Corpus:
                     try:
                         if self.postag:
                             # postag is always capitalized
-                            splitted = token.split('_')
-                            token = '_'.join(splitted[:-1]).lower() + '_' + splitted[-1]
+                            tag_idx = token.rfind('_')
+                            token, tag = token[:tag_idx].lower(), token[tag_idx:]
+                            token = token + tag
                             utterance_vectors[q] = self.embeddings[token]
                         else:
                             utterance_vectors[q] = self.embeddings[token.lower()]
                     except KeyError:
                         pass
                 x['emb'][n, :len(utterance), :] = utterance_vectors
+            if self.postag:
+                # remove tags before indexing and char-embedding
+                utterance = [u[:u.rfind('_')] for u in utterance]
+
             x['token'][n, :len(utterance)] = self.token_dict.toks2idxs(utterance)
             for k, token in enumerate(utterance):
                 x['char'][n, k, :len(token)] = self.char_dict.toks2idxs(token)
