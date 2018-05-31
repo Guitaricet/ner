@@ -16,6 +16,7 @@ from collections import defaultdict
 import random
 import numpy as np
 
+from pymystem3 import Mystem
 
 
 
@@ -24,6 +25,26 @@ DOC_START_STRING = '-DOCSTART-'
 SEED = 42
 SPECIAL_TOKENS = ['<PAD>', '<UNK>']
 SPECIAL_TAGS = ['<PAD>']
+
+# from https://github.com/akutuzov/universal-pos-tags/blob/4653e8a9154e93fe2f417c7fdb7a357b7d6ce333/ru-rnc.map
+RNC_2_UNIPOS = {
+    'A': 'ADJ',
+    'ADV': 'ADV',
+    'ADVPRO': 'ADV',
+    'ANUM': 'ADJ',
+    'APRO': 'DET',
+    'COM': 'ADJ',
+    'CONJ': 'SCONJ',
+    'INTJ': 'INTJ',
+    'NONLEX': 'X',
+    'NUM': 'NUM',
+    'PART': 'PART',
+    'PR': 'ADP',
+    'S': 'NOUN',
+    'SPRO': 'PRON',
+    'UNKN': 'X',
+    'V': 'VERB'
+}
 
 np.random.seed(SEED)
 random.seed(SEED)
@@ -114,9 +135,12 @@ class Corpus:
                  embeddings_file_path=None,
                  dicts_filepath=None,
                  embeddings_format='fasttext',
-                 noise_level=0):
+                 noise_level=0,
+                 postag=False):
         self.noise_level = noise_level
         self.embeddings_format = embeddings_format
+        self.postag = postag
+        self.m = Mystem()
 
         if dataset is not None:
             self.dataset = dataset
@@ -190,6 +214,24 @@ class Corpus:
             chars[0, n, :len(char_line)] = char_line
         return toks, chars
 
+    # from https://github.com/RaRe-Technologies/gensim-data/issues/3
+    def pos_tag_russian(self, word):
+        """
+        This function is needed for RusVectores w2v models
+        """
+        try:
+            processed = self.m.analyze(word)[0]
+            lemma = processed["analysis"][0]["lex"].lower().strip()
+            pos = processed["analysis"][0]["gr"].split(',')[0]
+            pos = pos.split('=')[0].strip()
+            # convert to Universal Dependencies POS tag format:
+            pos = RNC_2_UNIPOS[pos]
+            tagged = lemma+'_'+pos
+        except KeyError as e:
+            return word + '_X'  # UNK token
+
+        return tagged
+
     def _noise_generator_per_token(self, tokens):
         noised_tokens = []
         for token in tokens:
@@ -207,6 +249,8 @@ class Corpus:
                 noised += c
             else:
                 noised += random.choice(self.alphabet)
+        if self.postag:
+            noised = self.pos_tag_russian(noised)
         return noised
 
     def batch_generator(self,

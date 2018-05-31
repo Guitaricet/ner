@@ -41,6 +41,7 @@ parser.add_argument('--char-embeddings-type', type=str, default='cnn')
 parser.add_argument('--network-type', type=str, default='cnn')
 parser.add_argument('--noise', type=float, default=None)
 parser.add_argument('--embeddings-format', type=str, default='fasttext', help='fasttext or word2vec')
+parser.add_argument('--postag', default=False, action='store_true')
 
 
 def read_data(datapath):
@@ -108,7 +109,10 @@ if __name__ == '__main__':
 
     logging.info('Creating Corpus')
 
-    corp = Corpus(dataset_dict, embeddings_file_path=args.embeddings, embeddings_format=args.embeddings_format)
+    corp = Corpus(dataset_dict,
+                  embeddings_file_path=args.embeddings,
+                  embeddings_format=args.embeddings_format,
+                  postag=args.postag)
 
     results_all = []
 
