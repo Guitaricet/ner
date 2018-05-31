@@ -38,8 +38,7 @@ parser.add_argument('--results-filename', type=str, default='noise_experiment_re
 parser.add_argument('--no-char-embeddings', default=False, action='store_true')
 parser.add_argument('--char-embeddings-type', type=str, default='cnn')
 parser.add_argument('--network-type', type=str, default='cnn')
-# parser.add_argument('--gpu', default=False, action='store_true')
-# parser.add_argument('--use-capitalization', default=False, action='store_true')
+parser.add_argument('--noise', type=float, default=None)
 
 
 def read_data(datapath):
@@ -66,6 +65,9 @@ def read_data(datapath):
 
 if __name__ == '__main__':
     args = parser.parse_args()
+
+    if args.noise is not None:
+        NOISE_LEVELS = [args.noise]
 
     logging.info('')
     logging.info('')

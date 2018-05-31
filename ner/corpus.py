@@ -176,7 +176,7 @@ class Corpus:
         for n, char_line in enumerate(char_idxs):
             chars[0, n, :len(char_line)] = char_line
         return toks, chars
-    
+
     def _noise_generator_per_token(self, tokens):
         noised_tokens = []
         for token in tokens:
