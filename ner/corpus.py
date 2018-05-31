@@ -109,8 +109,15 @@ class Vocabulary:
 
 
 class Corpus:
-    def __init__(self, dataset=None, embeddings_file_path=None, dicts_filepath=None, noise_level=0):
+    def __init__(self,
+                 dataset=None,
+                 embeddings_file_path=None,
+                 dicts_filepath=None,
+                 embeddings_format='fasttext',
+                 noise_level=0):
         self.noise_level = noise_level
+        self.embeddings_format = embeddings_format
+
         if dataset is not None:
             self.dataset = dataset
             self.token_dict = Vocabulary(self.get_tokens())
@@ -122,7 +129,7 @@ class Corpus:
             self.dataset = None
             self.load_corpus_dicts(dicts_filepath)
         if embeddings_file_path is not None:
-            self.embeddings = self.load_embeddings(embeddings_file_path)
+            self.embeddings = self.load_embeddings(embeddings_file_path, format_=embeddings_format)
         else:
             self.embeddings = None
 
@@ -150,15 +157,21 @@ class Corpus:
                 for character in token:
                     yield character
 
-    def load_embeddings(self, file_path):
+    def load_embeddings(self, file_path, format_='fasttext'):
         # Embeddins must be in fastText format either bin or
         print('Loading embeddins...')
-        if file_path.endswith('.bin'):
+        if format_ == 'fasttext':
             from gensim.models.wrappers import FastText
             embeddings = FastText.load_fasttext_format(file_path)
-        else:
+        elif format_ == 'word2vec':
             from gensim.models import KeyedVectors
-            embeddings = KeyedVectors.load_word2vec_format(file_path)
+            try:
+                embeddings = KeyedVectors.load_word2vec_format(file_path)
+            except UnicodeDecodeError:
+                embeddings = KeyedVectors.load_word2vec_format(file_path, binary=True)
+        else:
+            raise ValueError('format should be fasttext or word2vec, but format=%s' % format_)
+
         print('Embeddings are loaded')
         return embeddings
 

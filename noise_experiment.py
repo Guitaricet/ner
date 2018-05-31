@@ -1,3 +1,4 @@
+import os
 import logging
 import argparse
 from time import time
@@ -39,6 +40,7 @@ parser.add_argument('--no-char-embeddings', default=False, action='store_true')
 parser.add_argument('--char-embeddings-type', type=str, default='cnn')
 parser.add_argument('--network-type', type=str, default='cnn')
 parser.add_argument('--noise', type=float, default=None)
+parser.add_argument('--embeddings-format', type=str, default='fasttext', help='fasttext or word2vec')
 
 
 def read_data(datapath):
@@ -65,6 +67,15 @@ def read_data(datapath):
 
 if __name__ == '__main__':
     args = parser.parse_args()
+
+    if os.path.exists(args.results_filename):
+        logging.warning('File at path %s exists' % args.results_filename)
+        yes = input('Replace it? (y/n) ')
+        if yes.lower() == 'y':
+            logging.info('File %s will be replaced' % args.results_filename)
+        else:
+            logging.info('Canceling execution')
+            exit(1)
 
     if args.noise is not None:
         NOISE_LEVELS = [args.noise]
@@ -97,7 +108,7 @@ if __name__ == '__main__':
 
     logging.info('Creating Corpus')
 
-    corp = Corpus(dataset_dict, embeddings_file_path=args.embeddings)
+    corp = Corpus(dataset_dict, embeddings_file_path=args.embeddings, embeddings_format=args.embeddings_format)
 
     results_all = []
 
