@@ -310,7 +310,13 @@ class Corpus:
                 utterance_vectors = np.zeros([len(utterance), self.embeddings.vector_size])
                 for q, token in enumerate(utterance):
                     try:
-                        utterance_vectors[q] = self.embeddings[token.lower()]
+                        if self.postag:
+                            # postag is always capitalized
+                            splitted = token.split('_')
+                            token = '_'.join(splitted[:-1]).lower() + '_' + splitted[-1]
+                            utterance_vectors[q] = self.embeddings[token]
+                        else:
+                            utterance_vectors[q] = self.embeddings[token.lower()]
                     except KeyError:
                         pass
                 x['emb'][n, :len(utterance), :] = utterance_vectors
