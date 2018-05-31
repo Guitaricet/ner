@@ -23,4 +23,4 @@
 # python3 noise_experiment.py --dataset data/conll2003 --network-type gru --no-char-embeddings --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/conll2003_fasttext_nochar_grunet.csv
 echo -e "\nCONLL Fixed Word2Vec\n"
 python3 noise_experiment.py --dataset data/conll2003 --embeddings-format word2vec --embeddings /media/data/nlp/data/GoogleNews-vectors-negative300.bin --results-filename results/conll_word2vec_fixed.csv
-python3 noise_experiment.py --ataset data/collection5 --embeddings-format word2vec --embeddings /media/data/nlp/data/GoogleNews-vectors-negative300.bin  --no-char-embeddings --results-filename results/conll_word2vec_fixed_nochar.csv
+python3 noise_experiment.py --dataset data/conll2003 --embeddings-format word2vec --embeddings /media/data/nlp/data/GoogleNews-vectors-negative300.bin  --no-char-embeddings --results-filename results/conll_word2vec_fixed_nochar.csv
