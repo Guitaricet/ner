@@ -149,7 +149,7 @@ if __name__ == '__main__':
                         "net_type": network_type,
                         "cell_type": cell_type,
                         "use_capitalization": False,
-                        "logging": True
+                        "logging": False
                     }
 
         net = NER(corp, **model_params)
