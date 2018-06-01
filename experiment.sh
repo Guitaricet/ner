@@ -13,10 +13,10 @@
 # python3 noise_experiment.py --dataset data/collection5 --network-type gru --no-char-embeddings --embeddings /media/data/nlp/data/wiki.ru.bin --results-filename results/collection5_fasttext_nochar_grunet.csv
 
 echo -e "\nFactRU\n"
-python3 noise_experiment.py --epochs 20 --dataset data/factru --results-filename results/factru_noembed.csv
-python3 noise_experiment.py --epochs 20 --dataset data/factru --embeddings /media/data/nlp/data/wiki.ru.bin --results-filename results/factru_fasttext.csv
-python3 noise_experiment.py --epochs 20 --dataset data/factru --no-char-embeddings --results-filename results/factru_noembed_nochar.csv
-python3 noise_experiment.py --epochs 20 --dataset data/factru --no-char-embeddings --embeddings /media/data/nlp/data/wiki.ru.bin --results-filename results/factru_fasttext_nochar.csv
+python3 noise_experiment.py --epochs 20 --dataset data/factru --results-filename results/factru_noembed_20epochs.csv
+python3 noise_experiment.py --epochs 20 --dataset data/factru --embeddings /media/data/nlp/data/wiki.ru.bin --results-filename results/factru_fasttext_20epochs.csv
+python3 noise_experiment.py --epochs 20 --dataset data/factru --no-char-embeddings --results-filename results/factru_noembed_nochar_20epochs.csv
+python3 noise_experiment.py --epochs 20 --dataset data/factru --no-char-embeddings --embeddings /media/data/nlp/data/wiki.ru.bin --results-filename results/factru_fasttext_nochar_20epochs.csv
 
 # echo -e "\nCONLL\n"
 # python3 noise_experiment.py --dataset data/conll2003 --results-filename results/conll2003_noembed.csv
