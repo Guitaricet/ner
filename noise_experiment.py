@@ -69,6 +69,7 @@ def read_data(datapath):
 if __name__ == '__main__':
     args = parser.parse_args()
 
+    # for debug:
     # logging.warning('HARDCODE!!')
     # args.postag = True
     # args.embeddings = '~/Downloads/ruscorpora_upos_skipgram_300_5_2018.vec'
@@ -129,6 +130,10 @@ if __name__ == '__main__':
         corp.noise_level = noise_level
 
         network_type = 'cnn' if args.network_type == 'cnn' else 'rnn'
+        if network_type == 'rnn':
+            cell_type = args.network_type
+        else:
+            cell_type = None
 
         model_params = {"filter_width": 7,
                         "embeddings_dropout": True,
@@ -142,7 +147,8 @@ if __name__ == '__main__':
                         "use_batch_norm": True,
                         "use_crf": True,
                         "net_type": network_type,
-                        "use_capitalization": False,
+                        "cell_type": cell_type,
+                        "use_capitalization": False
                     }
 
         net = NER(corp, **model_params)
