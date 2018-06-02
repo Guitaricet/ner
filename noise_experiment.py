@@ -29,7 +29,7 @@ logger.setLevel('DEBUG')
 time_total = time()
 
 
-NOISE_LEVELS = np.concatenate([np.arange(0, 0.05, 0.005), np.arange(0.05, 0.2, 0.01)])
+NOISE_LEVELS = np.concatenate([np.arange(0.05, 0.2, 0.01), np.arange(0, 0.05, 0.005)])
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str)
