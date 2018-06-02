@@ -69,7 +69,7 @@ def read_data(datapath):
 if __name__ == '__main__':
     args = parser.parse_args()
 
-    # for debug:
+    ## for debug:
     # logging.warning('HARDCODE!!')
     # args.postag = True
     # args.embeddings = '~/Downloads/ruscorpora_upos_skipgram_300_5_2018.vec'

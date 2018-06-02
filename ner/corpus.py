@@ -214,6 +214,9 @@ class Corpus:
             chars[0, n, :len(char_line)] = char_line
         return toks, chars
 
+    def pos_tag_russian_per_sentence(self, tokens):
+        return [self.pos_tag_russian(token) for token in tokens]
+
     # from https://github.com/RaRe-Technologies/gensim-data/issues/3
     def pos_tag_russian(self, word):
         """
@@ -232,7 +235,7 @@ class Corpus:
 
         return tagged
 
-    def _noise_generator_per_token(self, tokens):
+    def _noise_generator_per_sentence(self, tokens):
         noised_tokens = []
         for token in tokens:
             assert len(token) > 0
@@ -249,8 +252,6 @@ class Corpus:
                 noised += c
             else:
                 noised += random.choice(self.alphabet)
-        if self.postag:
-            noised = self.pos_tag_russian(noised)
         return noised
 
     def batch_generator(self,
@@ -273,7 +274,9 @@ class Corpus:
             x_batch = [tokens_tags_pairs[ind][0] for ind in order[batch_start: batch_end]]
             # add noise
             if self.noise_level > 0:
-                x_batch = [self._noise_generator_per_token(tokens) for tokens in x_batch]
+                x_batch = [self._noise_generator_per_sentence(token) for token in x_batch]
+            if self.postag:
+                x_batch = [self.pos_tag_russian_per_sentence(noised) for noised in x_batch]
 
             y_batch = [tokens_tags_pairs[ind][1] for ind in order[batch_start: batch_end]]
             x, y = self.tokens_batch_to_numpy_batch(x_batch, y_batch)
