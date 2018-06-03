@@ -35,7 +35,7 @@ NOISE_LEVELS = np.concatenate([np.arange(0, 0.05, 0.005), np.arange(0.05, 0.2, 0
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str)
 parser.add_argument('--original-testset', type=str)
-parser.add_argument('--epochs', type=int, default=10)
+parser.add_argument('--epochs', type=int, default=5)
 parser.add_argument('--embeddings', type=str, default=None, help='path to fasttext embeddings')
 parser.add_argument('--results-filename', type=str, default='noise_experiment_results.csv')
 parser.add_argument('--no-char-embeddings', default=False, action='store_true')
