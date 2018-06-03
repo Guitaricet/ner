@@ -38,6 +38,6 @@
 
 echo -e "\CAp\n"
 # python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --results-filename results/CAp_noembed.csv
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --no-char-embeddings --results-filename results/CAp_noembed_nochar.csv
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --embeddings /media/data/nlp/data/wiki.fr.bin --results-filename results/CAp_fasttext.csv
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --embeddings /media/data/nlp/data/wiki.fr.bin --no-char-embeddings --results-filename results/CAp_fasttext_nochar.csv
+# python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --no-char-embeddings --results-filename results/CAp_noembed_nochar.csv
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --embeddings /media/data/nlp/data/cc.fr.300.bin --results-filename results/CAp_fasttext.csv
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --embeddings /media/data/nlp/data/cc.fr.300.bin --no-char-embeddings --results-filename results/CAp_fasttext_nochar.csv
