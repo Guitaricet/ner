@@ -43,7 +43,7 @@ parser.add_argument('--char-embeddings-type', type=str, default='cnn')
 parser.add_argument('--network-type', type=str, default='cnn')
 parser.add_argument('--noise', type=float, default=None)
 parser.add_argument('--embeddings-format', type=str, default='fasttext', help='fasttext or word2vec')
-parser.add_argument('--not-trainable-embeddings', default=False, action='store true')
+parser.add_argument('--not-trainable-embeddings', default=False, action='store_true')
 
 
 def read_data(datapath):
