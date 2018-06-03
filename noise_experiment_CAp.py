@@ -43,7 +43,7 @@ parser.add_argument('--char-embeddings-type', type=str, default='cnn')
 parser.add_argument('--network-type', type=str, default='cnn')
 parser.add_argument('--noise', type=float, default=None)
 parser.add_argument('--embeddings-format', type=str, default='fasttext', help='fasttext or word2vec')
-parser.add_argument('--postag', default=False, action='store_true')
+parser.add_argument('--not-trainable-embeddings', default=False, action='store true')
 
 
 def read_data(datapath):
@@ -90,15 +90,6 @@ def read_data(datapath):
 if __name__ == '__main__':
     args = parser.parse_args()
 
-    ## for debug:
-    # logging.warning('HARDCODE!!')
-    # args.postag = True
-    # args.embeddings = '~/Downloads/ruscorpora_upos_skipgram_300_5_2018.vec'
-    # args.results_filename = 'test.csv'
-    # args.dataset = 'data/collection5'
-    # args.noise = 0.1
-    # args.embeddings_format = 'word2vec'
-
     if os.path.exists(args.results_filename):
         logging.warning('File at path %s exists' % args.results_filename)
         yes = input('Replace it? (y/n) ')
@@ -140,8 +131,7 @@ if __name__ == '__main__':
 
     corp = Corpus(dataset_dict,
                   embeddings_file_path=args.embeddings,
-                  embeddings_format=args.embeddings_format,
-                  postag=args.postag)
+                  embeddings_format=args.embeddings_format)
 
     results_all = []
 
@@ -169,7 +159,8 @@ if __name__ == '__main__':
                         "net_type": network_type,
                         "cell_type": cell_type,
                         "use_capitalization": False,
-                        "logging": False
+                        "logging": False,
+                        "trainable_embeddings": not args.not_trainable_embeddings
                     }
 
         net = NER(corp, **model_params)

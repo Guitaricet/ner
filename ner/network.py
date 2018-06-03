@@ -52,7 +52,9 @@ class NER:
                  verbouse=True,
                  use_capitalization=False,
                  concat_embeddings=False,
-                 cell_type=None):
+                 cell_type=None,
+                 trainable_embeddings=True):
+        self.trainable_embeddings = trainable_embeddings
         tf.reset_default_graph()
 
         n_tags = len(corpus.tag_dict)
@@ -84,7 +86,10 @@ class NER:
         # Embeddings
         if not embeddings_onethego:
             with tf.variable_scope('Embeddings'):
-                w_emb = embedding_layer(x_word, n_tokens=n_tokens, token_embedding_dim=token_embeddings_dim)
+                w_emb = embedding_layer(x_word,
+                                        n_tokens=n_tokens,
+                                        token_embedding_dim=token_embeddings_dim,
+                                        trainable=self.trainable_embeddings)
                 if use_char_embeddins:
                     # Character embeddings
                     c_emb = character_embedding_network(x_char,
