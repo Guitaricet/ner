@@ -30,12 +30,12 @@ logger.setLevel('DEBUG')
 time_total = time()
 
 
-NOISE_LEVELS = np.concatenate([np.arange(0.05, 0.2, 0.01), np.arange(0, 0.05, 0.005)])
+NOISE_LEVELS = np.concatenate([np.arange(0, 0.05, 0.005), np.arange(0.05, 0.2, 0.01)])
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str)
 parser.add_argument('--original-testset', type=str)
-parser.add_argument('--epochs', type=int, default=5)
+parser.add_argument('--epochs', type=int, default=10)
 parser.add_argument('--embeddings', type=str, default=None, help='path to fasttext embeddings')
 parser.add_argument('--results-filename', type=str, default='noise_experiment_results.csv')
 parser.add_argument('--no-char-embeddings', default=False, action='store_true')
@@ -190,7 +190,7 @@ if __name__ == '__main__':
         results_dict.update({'noised_' + k: v for k, v in results['__total__'].items()})
 
         net.corpus.noise_level = 0
-        results = net.eval_conll(dataset_type='original_testset')
+        results = net.eval_conll(dataset_type='test_original')
         results_dict.update({'clean_' + k: v for k, v in results['__total__'].items()})
 
         results_all.append(results_dict)
