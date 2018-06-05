@@ -44,6 +44,7 @@ parser.add_argument('--embeddings-format', type=str, default='fasttext', help='f
 parser.add_argument('--postag', default=False, action='store_true')
 parser.add_argument('--not-trainable-embeddings', default=False, action='store_true')
 
+
 def read_data(datapath):
     with open(datapath) as f:
         xy_list = list()
