@@ -47,9 +47,9 @@
 # python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --not-trainable-embeddings --original-testset data/CAp/test_set_wlabels.txt --results-filename results/CAp_noembed_not_trainable.csv
 # python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --not-trainable-embeddings --no-char-embeddings --original-testset data/CAp/test_set_wlabels.txt --results-filename results/CAp_noembed_not_trainable_nochar.csv
 
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --results-filename results/CAp_noembed.csv --noise 0
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --no-char-embeddings --results-filename results/CAp_noembed_nochar.csv --noise 0
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --embeddings /media/data/nlp/data/cc.fr.300.bin --results-filename results/CAp_fasttext.csv --noise 0
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --embeddings /media/data/nlp/data/cc.fr.300.bin --no-char-embeddings --results-filename results/CAp_fasttext_nochar.csv --noise 0
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --not-trainable-embeddings --original-testset data/CAp/test_set_wlabels.txt --results-filename results/CAp_noembed_not_trainable.csv --noise 0
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --not-trainable-embeddings --no-char-embeddings --original-testset data/CAp/test_set_wlabels.txt --results-filename results/CAp_noembed_not_trainable_nochar.csv --noise 0
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --results-filename results/CAp_noembed_original.csv --noise 0
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --no-char-embeddings --results-filename results/CAp_noembed_nochar_original.csv --noise 0
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --embeddings /media/data/nlp/data/cc.fr.300.bin --results-filename results/CAp_fasttext_original.csv --noise 0
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --embeddings /media/data/nlp/data/cc.fr.300.bin --no-char-embeddings --results-filename results/CAp_fasttext_nochar_original.csv --noise 0
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --not-trainable-embeddings --original-testset data/CAp/test_set_wlabels.txt --results-filename results/CAp_noembed_not_trainable_original.csv --noise 0
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --not-trainable-embeddings --no-char-embeddings --original-testset data/CAp/test_set_wlabels.txt --results-filename results/CAp_noembed_not_trainable_nochar_original.csv --noise 0
