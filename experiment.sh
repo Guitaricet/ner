@@ -8,11 +8,11 @@
 # python3 noise_experiment.py --dataset data/collection5 --embeddings-format word2vec --embeddings /media/data/nlp/data/ruwikiruscorpora-nobigrams_upos_skipgram_300_5_2018.vec --postag --results-filename results/collection5_word2vec_fixed.csv
 # python3 noise_experiment.py --dataset data/collection5 --embeddings-format word2vec --embeddings /media/data/nlp/data/ruwikiruscorpora-nobigrams_upos_skipgram_300_5_2018.vec --postag  --no-char-embeddings --results-filename results/collection5_word2vec_fixed_nochar.csv
 
-echo -e "\nCollection5 LSTM network\n"
-python3 noise_experiment.py --dataset data/collection5 --network-type lstm --results-filename results/collection5_noembed_lstmnet.csv
-python3 noise_experiment.py --dataset data/collection5 --network-type lstm --embeddings /media/data/nlp/data/wiki.ru.bin --results-filename results/collection5_fasttext_lstmnet.csv
-python3 noise_experiment.py --dataset data/collection5 --network-type lstm --no-char-embeddings --results-filename results/collection5_noembed_nochar_lstmnet.csv
-python3 noise_experiment.py --dataset data/collection5 --network-type lstm --no-char-embeddings --embeddings /media/data/nlp/data/wiki.ru.bin --results-filename results/collection5_fasttext_nochar_lstmnet.csv
+# echo -e "\nCollection5 LSTM network\n"
+# python3 noise_experiment.py --dataset data/collection5 --network-type lstm --results-filename results/collection5_noembed_lstmnet.csv
+# python3 noise_experiment.py --dataset data/collection5 --network-type lstm --embeddings /media/data/nlp/data/wiki.ru.bin --results-filename results/collection5_fasttext_lstmnet.csv
+# python3 noise_experiment.py --dataset data/collection5 --network-type lstm --no-char-embeddings --results-filename results/collection5_noembed_nochar_lstmnet.csv
+# python3 noise_experiment.py --dataset data/collection5 --network-type lstm --no-char-embeddings --embeddings /media/data/nlp/data/wiki.ru.bin --results-filename results/collection5_fasttext_nochar_lstmnet.csv
 
 # echo -e "\nFactRU\n"
 # python3 noise_experiment.py --epochs 30 --dataset data/factru --results-filename results/factru_noembed_30epochs.csv
