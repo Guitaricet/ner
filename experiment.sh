@@ -55,7 +55,7 @@
 # python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --not-trainable-embeddings --no-char-embeddings --original-testset data/CAp/test_set_wlabels.txt --results-filename results/CAp_noembed_not_trainable_nochar_original.csv --noise 0
 
 echo -e "\nCAp lstm network\n"
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --network-type lstm --results-filename results/CAp_noembed_lstmnet.csv
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --network-type lstm --no-char-embeddings --results-filename results/CAp_noembed_nochar_lstmnet.csv
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --network-type lstm --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/CAp_fasttext_lstmnet.csv
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --network-type lstm --no-char-embeddings --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/CAp_fasttext_nochar_lstmnet.csv
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --results-filename results/CAp_noembed_lstmnet.csv
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --no-char-embeddings --results-filename results/CAp_noembed_nochar_lstmnet.csv
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/CAp_fasttext_lstmnet.csv
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --no-char-embeddings --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/CAp_fasttext_nochar_lstmnet.csv
