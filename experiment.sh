@@ -14,19 +14,15 @@
 # python3 noise_experiment.py --dataset data/collection5 --network-type lstm --no-char-embeddings --results-filename results/collection5_noembed_nochar_lstmnet.csv
 # python3 noise_experiment.py --dataset data/collection5 --network-type lstm --no-char-embeddings --embeddings /media/data/nlp/data/wiki.ru.bin --results-filename results/collection5_fasttext_nochar_lstmnet.csv
 
-# echo -e "\nFactRU\n"
-# python3 noise_experiment.py --epochs 30 --dataset data/factru --results-filename results/factru_noembed_30epochs.csv
-# python3 noise_experiment.py --epochs 30 --dataset data/factru --embeddings /media/data/nlp/data/wiki.ru.bin --results-filename results/factru_fasttext_30epochs.csv
-# python3 noise_experiment.py --epochs 30 --dataset data/factru --no-char-embeddings --results-filename results/factru_noembed_nochar_30epochs.csv
-# python3 noise_experiment.py --epochs 30 --dataset data/factru --no-char-embeddings --embeddings /media/data/nlp/data/wiki.ru.bin --results-filename results/factru_fasttext_nochar_30epochs.csv
-
 # echo -e "\nCONLL\n"
 # python3 noise_experiment.py --dataset data/conll2003 --results-filename results/conll2003_noembed.csv
-# python3 noise_experiment.py --dataset data/conll2003 --no-char-embeddings --results-filename results/conll2003_noembed_nochar.csv
 # python3 noise_experiment.py --dataset data/conll2003 --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/conll2003_fasttext.csv
+# python3 noise_experiment.py --dataset data/conll2003 --no-char-embeddings --results-filename results/conll2003_noembed_nochar.csv
 # python3 noise_experiment.py --dataset data/conll2003 --no-char-embeddings --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/conll2003_fasttext_nochar.csv
 # python3 noise_experiment.py --dataset data/conll2003 --not-trainable-embeddings --results-filename results/conll2003_noembed_not_trainable.csv
 # python3 noise_experiment.py --dataset data/conll2003 --not-trainable-embeddings --no-char-embeddings --results-filename results/conll2003_noembed_not_trainable_nochar.csv
+# python3 noise_experiment.py --dataset data/conll2003 --embeddings-format word2vec --embeddings /media/data/nlp/data/GoogleNews-vectors-negative300.bin --results-filename results/conll_word2vec_fixed.csv
+# python3 noise_experiment.py --dataset data/conll2003 --embeddings-format word2vec --embeddings /media/data/nlp/data/GoogleNews-vectors-negative300.bin  --no-char-embeddings --results-filename results/conll_word2vec_fixed_nochar.csv
 
 
 # echo -e "\nCONLL lstm network\n"
@@ -34,10 +30,6 @@
 # python3 noise_experiment.py --dataset data/conll2003 --network-type lstm --no-char-embeddings --results-filename results/conll2003_noembed_nochar_lstmnet.csv
 # python3 noise_experiment.py --dataset data/conll2003 --network-type lstm --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/conll2003_fasttext_lstmnet.csv
 # python3 noise_experiment.py --dataset data/conll2003 --network-type lstm --no-char-embeddings --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/conll2003_fasttext_nochar_lstmnet.csv
-
-# echo -e "\nCONLL Fixed Word2Vec\n"
-# python3 noise_experiment.py --dataset data/conll2003 --embeddings-format word2vec --embeddings /media/data/nlp/data/GoogleNews-vectors-negative300.bin --results-filename results/conll_word2vec_fixed.csv
-# python3 noise_experiment.py --dataset data/conll2003 --embeddings-format word2vec --embeddings /media/data/nlp/data/GoogleNews-vectors-negative300.bin  --no-char-embeddings --results-filename results/conll_word2vec_fixed_nochar.csv
 
 # echo -e "\CAp\n"
 # python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --results-filename results/CAp_noembed.csv
@@ -54,8 +46,18 @@
 # python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --not-trainable-embeddings --original-testset data/CAp/test_set_wlabels.txt --results-filename results/CAp_noembed_not_trainable_original.csv --noise 0
 # python3 noise_experiment_CAp.py --dataset data/CAp/dataset_original_dict.pkl --not-trainable-embeddings --no-char-embeddings --original-testset data/CAp/test_set_wlabels.txt --results-filename results/CAp_noembed_not_trainable_nochar_original.csv --noise 0
 
-echo -e "\nCAp lstm network\n"
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --results-filename results/CAp_noembed_lstmnet.csv
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --no-char-embeddings --results-filename results/CAp_noembed_nochar_lstmnet.csv
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/CAp_fasttext_lstmnet.csv
-python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --no-char-embeddings --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/CAp_fasttext_nochar_lstmnet.csv
+# echo -e "\nCAp lstm network\n"
+# python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --results-filename results/CAp_noembed_lstmnet.csv
+# python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --no-char-embeddings --results-filename results/CAp_noembed_nochar_lstmnet.csv
+# python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/CAp_fasttext_lstmnet.csv
+# python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --no-char-embeddings --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/CAp_fasttext_nochar_lstmnet.csv
+
+echo -e "\W-NUT\n"
+python3 noise_experiment.py --dataset data/wnut --results-filename results/wnut_noembed.csv
+python3 noise_experiment.py --dataset data/wnut --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/wnut_fasttext.csv
+python3 noise_experiment.py --dataset data/wnut --no-char-embeddings --results-filename results/wnut_noembed_nochar.csv
+python3 noise_experiment.py --dataset data/wnut --no-char-embeddings --embeddings /media/data/nlp/data/wiki.en.bin --results-filename results/wnut_fasttext_nochar.csv
+python3 noise_experiment.py --dataset data/wnut --not-trainable-embeddings --results-filename results/wnut_noembed_not_trainable.csv
+python3 noise_experiment.py --dataset data/wnut --not-trainable-embeddings --no-char-embeddings --results-filename results/wnut_noembed_not_trainable_nochar.csv
+python3 noise_experiment.py --dataset data/wnut --embeddings-format word2vec --embeddings /media/data/nlp/data/GoogleNews-vectors-negative300.bin --results-filename results/wnut_word2vec_fixed.csv
+python3 noise_experiment.py --dataset data/wnut --embeddings-format word2vec --embeddings /media/data/nlp/data/GoogleNews-vectors-negative300.bin  --no-char-embeddings --results-filename results/wnut_word2vec_fixed_nochar.csv

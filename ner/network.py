@@ -125,6 +125,8 @@ class NER:
         elif 'rnn' in net_type.lower():
             if cell_type is None or cell_type not in {'lstm', 'gru'}:
                 raise RuntimeError('You must specify the type of the cell! It could be either "lstm" or "gru"')
+            # c_emb: Tensor("Embeddings/Char_Emb_Network/embedding_lookup:0", shape=(?, ?, ?, 25), dtype=float32)
+            # emb:   Tensor("dropout/cond/Merge:0", shape=(?, ?, 325), dtype=float32)
             units = stacked_rnn(emb, n_filters, cell_type=cell_type)
 
         elif 'cnn_highway' in net_type.lower():
