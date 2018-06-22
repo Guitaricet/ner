@@ -43,6 +43,7 @@ parser.add_argument('--noise', type=float, default=None)
 parser.add_argument('--embeddings-format', type=str, default='fasttext', help='fasttext or word2vec')
 parser.add_argument('--postag', default=False, action='store_true')
 parser.add_argument('--not-trainable-embeddings', default=False, action='store_true')
+parser.add_argument('--dropout', type=float, default=0.5)
 
 
 def read_data(datapath):
@@ -147,7 +148,7 @@ if __name__ == '__main__':
 
         net = NER(corp, **model_params)
 
-        learning_params = {'dropout_rate': 0.5,
+        learning_params = {'dropout_rate': args.dropout,
                            'epochs': args.epochs,
                            'learning_rate': 0.005,
                            'batch_size': 8,
