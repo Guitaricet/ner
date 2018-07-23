@@ -32,7 +32,7 @@ time_total = time()
 NOISE_LEVELS = np.concatenate([np.arange(0.05, 0.2, 0.01), np.arange(0, 0.05, 0.005)])
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', type=str)
+parser.add_argument('--dataset', type=str, default='data/collection5')
 parser.add_argument('--epochs', type=int, default=5)
 parser.add_argument('--embeddings', type=str, default=None, help='path to fasttext embeddings')
 parser.add_argument('--results-filename', type=str, default='noise_experiment_results.csv')
@@ -158,17 +158,18 @@ if __name__ == '__main__':
         results = net.fit(**learning_params)
 
         logging.info('Evaluating the model..')
-        results_dict = {'noise_level': noise_level}
-        results_dict.update(model_params)
-        results_dict.update(learning_params)
-        results_dict.update({'noised_' + k: v for k, v in results['__total__'].items()})
+        for _ in range(10):
+            results_dict = {'noise_level': noise_level}
+            results_dict.update(model_params)
+            results_dict.update(learning_params)
+            results_dict.update({'noised_' + k: v for k, v in results['__total__'].items()})
 
-        net.corpus.noise_level = 0
+            net.corpus.noise_level = 0
 
-        results = net.eval_conll()
-        results_dict.update({'clean_' + k: v for k, v in results['__total__'].items()})
+            results = net.eval_conll()
+            results_dict.update({'clean_' + k: v for k, v in results['__total__'].items()})
 
-        results_all.append(results_dict)
+            results_all.append(results_dict)
         logging.info('Saving results...')
         pd.DataFrame(results_all).to_csv(args.results_filename)
 
