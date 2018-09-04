@@ -1,0 +1,2 @@
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --embeddings /data/embeddings/cc.fr.300.bin --results-filename results/CAp_fasttext_lstmnet.csv
+python3 noise_experiment_CAp.py --dataset data/CAp/dataset_dict.pkl --original-testset data/CAp/test_set_wlabels.txt --network-type lstm --no-char-embeddings --embeddings /data/embeddings/cc.fr.300.bin --results-filename results/CAp_fasttext_nochar_lstmnet.csv

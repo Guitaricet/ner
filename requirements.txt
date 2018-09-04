@@ -6,3 +6,4 @@ tqdm>=4.19.5
 requests>=2.18.4
 gensim>=2.3.0
 pymystem3
+pandas

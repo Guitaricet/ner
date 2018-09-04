@@ -9,6 +9,7 @@ import pandas as pd
 from ner.corpus import Corpus
 from ner.network import NER
 
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
 formatter = logging.Formatter(
     '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
@@ -143,8 +144,7 @@ if __name__ == '__main__':
                         "cell_type": cell_type,
                         "use_capitalization": False,
                         "logging": False,
-                        "trainable_embeddings": not args.not_trainable_embeddings
-                    }
+                        "trainable_embeddings": not args.not_trainable_embeddings}
 
         net = NER(corp, **model_params)
 
@@ -152,8 +152,7 @@ if __name__ == '__main__':
                            'epochs': args.epochs,
                            'learning_rate': 0.005,
                            'batch_size': 8,
-                           'learning_rate_decay': 0.707
-                        }
+                           'learning_rate_decay': 0.707}
 
         results = net.fit(**learning_params)
 
@@ -173,4 +172,4 @@ if __name__ == '__main__':
         logging.info('Saving results...')
         pd.DataFrame(results_all).to_csv(args.results_filename)
 
-    logging.info('Total execution time: %s min' % (((time() - time_total) // 60)))
+    logging.info('Total execution time: %s min' % ((time() - time_total) // 60))
