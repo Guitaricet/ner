@@ -19,7 +19,6 @@ import numpy as np
 from pymystem3 import Mystem
 
 
-
 DATA_PATH = '/tmp/ner'
 DOC_START_STRING = '-DOCSTART-'
 SEED = 42
@@ -136,17 +135,25 @@ class Corpus:
                  dicts_filepath=None,
                  embeddings_format='fasttext',
                  noise_level=0,
-                 postag=False):
+                 postag=False,
+                 is_rove=False,
+                 rove_vocab=None):
         self.noise_level = noise_level
         self.embeddings_format = embeddings_format
         self.postag = postag
+        self.is_rove = is_rove
         self.m = Mystem()
+        if rove_vocab is not None:
+            self.rove_vocab = rove_vocab
 
         if dataset is not None:
             self.dataset = dataset
             self.token_dict = Vocabulary(self.get_tokens())
             self.tag_dict = Vocabulary(self.get_tags(), is_tags=True)
             self.char_dict = Vocabulary(self.get_characters())
+            # if rove_vocab is not None:
+            #     self.alphabet = list(self.rove_vocab.keys())
+            # else:
             self.alphabet = list(self.char_dict._t2i.keys())
             print(self.alphabet)
         elif dicts_filepath is not None:
@@ -180,6 +187,38 @@ class Corpus:
             for token in tokens:
                 for character in token:
                     yield character
+
+    # BME encoding for RoVe
+    def letters2vec(self, word, dtype=np.uint8):
+        base = np.zeros(len(self.rove_vocab), dtype=dtype)
+
+        def update_vector(vector, char):
+            if char in self.rove_vocab:
+                vector[self.rove_vocab.get(char, 0)] += 1
+
+        middle = np.copy(base)
+        for char in word:
+            update_vector(middle, char)
+
+        first = np.copy(base)
+        update_vector(first, word[0])
+        second = np.copy(base)
+        if len(word) > 1:
+            update_vector(second, word[1])
+        third = np.copy(base)
+        if len(word) > 2:
+            update_vector(third, word[2])
+
+        end_first = np.copy(base)
+        update_vector(end_first, word[-1])
+        end_second = np.copy(base)
+        if len(word) > 1:
+            update_vector(end_second, word[-2])
+        end_third = np.copy(base)
+        if len(word) > 2:
+            update_vector(end_third, word[-3])
+
+        return np.concatenate([first, second, third, middle, end_third, end_second, end_first])
 
     def load_embeddings(self, file_path, format_='fasttext'):
         # Embeddins must be in fastText format either bin or
@@ -279,14 +318,22 @@ class Corpus:
                 x_batch = [self.pos_tag_russian_per_sentence(noised) for noised in x_batch]
 
             y_batch = [tokens_tags_pairs[ind][1] for ind in order[batch_start: batch_end]]
-            x, y = self.tokens_batch_to_numpy_batch(x_batch, y_batch)
+            x, y = self.preprocess_batch(x_batch, y_batch)
             yield x, y
 
-    def tokens_batch_to_numpy_batch(self, batch_x, batch_y=None):
+    def preprocess_batch(self, batch_x, batch_y=None):
+        #
+        # Prepare x batch
+        #
         x = dict()
         # Determine dimensions
         batch_size = len(batch_x)
-        max_utt_len = max([len(utt) for utt in batch_x])
+        if self.is_rove:
+            max_utt_len = 32  # rove does not support variable length
+            batch_x = [utt[:max_utt_len] for utt in batch_x]
+            batch_y = [bio[:max_utt_len] for bio in batch_y]
+        else:
+            max_utt_len = max([len(utt) for utt in batch_x])
         # Fix batch with len 1 issue (https://github.com/deepmipt/ner/issues/4) 
         max_utt_len = max(max_utt_len, 2)
         max_token_len = max([len(token) for utt in batch_x for token in utt])
@@ -297,7 +344,10 @@ class Corpus:
         if prepare_embeddings_onthego:  # If the embeddings is a fastText model
             x['emb'] = np.zeros([batch_size, max_utt_len, self.embeddings.vector_size], dtype=np.float32)
 
-        x['token'] = np.ones([batch_size, max_utt_len], dtype=np.int32) * self.token_dict['<PAD>']
+        if self.is_rove:
+            x['token'] = np.zeros([batch_size, max_utt_len, 7 * len(self.rove_vocab)])
+        else:
+            x['token'] = np.ones([batch_size, max_utt_len], dtype=np.int32) * self.token_dict['<PAD>']
         x['char'] = np.ones([batch_size, max_utt_len, max_token_len], dtype=np.int32) * self.char_dict['<PAD>']
 
         # Capitalization
@@ -328,7 +378,11 @@ class Corpus:
                 # remove tags before indexing and char-embedding
                 utterance = [u[:u.rfind('_')] for u in utterance]
 
-            x['token'][n, :len(utterance)] = self.token_dict.toks2idxs(utterance)
+            if self.is_rove:
+                toks = [self.letters2vec(w) for w in utterance]
+            else:
+                toks = self.token_dict.toks2idxs(utterance)
+            x['token'][n, :len(utterance)] = toks
             for k, token in enumerate(utterance):
                 x['char'][n, k, :len(token)] = self.char_dict.toks2idxs(token)
 
@@ -337,7 +391,9 @@ class Corpus:
         for n in range(batch_size):
             x['mask'][n, :len(batch_x[n])] = 1
 
+        #
         # Prepare y batch
+        #
         if batch_y is not None:
             y = np.ones([batch_size, max_utt_len], dtype=np.int32) * self.tag_dict['<PAD>']
         else:

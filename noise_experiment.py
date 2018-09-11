@@ -33,7 +33,7 @@ time_total = time()
 NOISE_LEVELS = np.concatenate([np.arange(0.05, 0.2, 0.01), np.arange(0, 0.05, 0.005)])
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', type=str, default='data/collection5')
+parser.add_argument('--dataset', type=str)
 parser.add_argument('--epochs', type=int, default=5)
 parser.add_argument('--embeddings', type=str, default=None, help='path to fasttext embeddings')
 parser.add_argument('--results-filename', type=str, default='noise_experiment_results.csv')
@@ -45,6 +45,7 @@ parser.add_argument('--embeddings-format', type=str, default='fasttext', help='f
 parser.add_argument('--postag', default=False, action='store_true')
 parser.add_argument('--not-trainable-embeddings', default=False, action='store_true')
 parser.add_argument('--dropout', type=float, default=0.5)
+parser.add_argument('--rove-path', type=str, default=None, help='path to rove model and vocabulary')
 
 
 def read_data(datapath):
@@ -112,10 +113,21 @@ if __name__ == '__main__':
 
     logging.info('Creating Corpus')
 
+    rove_path = args.rove_path
+    if rove_path is not None:
+        import pickle
+        path = os.path.join(rove_path, 'chars_vocab.pkl')
+        with open(path, 'rb') as f:
+            _, vocab = pickle.load(f)
+    else:
+        vocab = None
+
     corp = Corpus(dataset_dict,
                   embeddings_file_path=args.embeddings,
                   embeddings_format=args.embeddings_format,
-                  postag=args.postag)
+                  postag=args.postag,
+                  is_rove=vocab is not None,
+                  rove_vocab=vocab)
 
     results_all = []
 
@@ -144,15 +156,18 @@ if __name__ == '__main__':
                         "cell_type": cell_type,
                         "use_capitalization": False,
                         "logging": False,
-                        "trainable_embeddings": not args.not_trainable_embeddings}
+                        "trainable_embeddings": not args.not_trainable_embeddings,
+                        "rove_embeddings": rove_path is not None,
+                        "rove_path": rove_path}
 
         net = NER(corp, **model_params)
 
         learning_params = {'dropout_rate': args.dropout,
                            'epochs': args.epochs,
                            'learning_rate': 0.005,
-                           'batch_size': 8,
-                           'learning_rate_decay': 0.707}
+                           'batch_size': 64,
+                           'learning_rate_decay': 0.707,
+                           'allow_smaller_last_batch': False}
 
         results = net.fit(**learning_params)
 

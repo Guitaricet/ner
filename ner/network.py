@@ -53,8 +53,11 @@ class NER:
                  use_capitalization=False,
                  concat_embeddings=False,
                  cell_type=None,
-                 trainable_embeddings=True):
+                 trainable_embeddings=True,
+                 rove_embeddings=False,
+                 rove_path=None):
         self.trainable_embeddings = trainable_embeddings
+        self.rove_embeddings = rove_embeddings
         tf.reset_default_graph()
 
         n_tags = len(corpus.tag_dict)
@@ -64,9 +67,21 @@ class NER:
                               corpus.embeddings is not None and \
                               not isinstance(corpus.embeddings, dict)
 
+        if rove_embeddings:
+            assert embeddings_onethego ^ rove_embeddings
+            assert rove_embeddings ^ (rove_path is None)
+
         # Create placeholders
         if embeddings_onethego:
             x_word = tf.placeholder(dtype=tf.float32, shape=[None, None, corpus.embeddings.vector_size], name='x_word')
+        elif rove_embeddings:
+            ckpt = tf.train.get_checkpoint_state(rove_path)
+            graph = tf.get_default_graph()
+            self.rove_saver = tf.train.import_meta_graph(ckpt.model_checkpoint_path+'.meta')
+            rove_input = graph.get_tensor_by_name('input:0')
+            x_word = rove_input
+            rove_output = graph.get_tensor_by_name('target:0')
+            tf.stop_gradient(rove_output)
         else:
             x_word = tf.placeholder(dtype=tf.int32, shape=[None, None], name='x_word')
 
@@ -86,10 +101,13 @@ class NER:
         # Embeddings
         if not embeddings_onethego:
             with tf.variable_scope('Embeddings'):
-                w_emb = embedding_layer(x_word,
-                                        n_tokens=n_tokens,
-                                        token_embedding_dim=token_embeddings_dim,
-                                        trainable=self.trainable_embeddings)
+                if rove_embeddings:
+                    w_emb = rove_output
+                else:
+                    w_emb = embedding_layer(x_word,
+                                            n_tokens=n_tokens,
+                                            token_embedding_dim=token_embeddings_dim,
+                                            trainable=self.trainable_embeddings)
                 if use_char_embeddins:
                     # Character embeddings
                     c_emb = character_embedding_network(x_char,
@@ -110,6 +128,7 @@ class NER:
             cap = tf.expand_dims(x_capi, 2)
             emb = tf.concat([emb, cap], axis=2)
 
+        self.emb = emb
         # Dropout for embeddings
         if embeddings_dropout:
             emb = tf.layers.dropout(emb, dropout_ph, training=training_ph)
@@ -235,13 +254,17 @@ class NER:
         total_num_parameters = np.sum(list(blocks.values()))
         print('Total number of parameters equal {}'.format(total_num_parameters))
 
-    def fit(self, batch_gen=None, batch_size=32, learning_rate=1e-3, epochs=1, dropout_rate=0.5, learning_rate_decay=1):
+    def fit(self, batch_gen=None, batch_size=32, learning_rate=1e-3, epochs=1, dropout_rate=0.5, learning_rate_decay=1,
+            allow_smaller_last_batch=True):
         for epoch in range(epochs):
             if self.verbouse:
                 print('Epoch {}'.format(epoch))
             if batch_gen is None:
-                batch_generator = self.corpus.batch_generator(batch_size, dataset_type='train')
-            for x, y in batch_generator:
+                batch_gen = self.corpus.batch_generator(batch_size,
+                                                        dataset_type='train',
+                                                        allow_smaller_last_batch=allow_smaller_last_batch)
+
+            for x, y in batch_gen:
                 feed_dict = self._fill_feed_dict(x,
                                                  y,
                                                  learning_rate,
@@ -249,10 +272,12 @@ class NER:
                                                  training=True,
                                                  learning_rate_decay=learning_rate_decay)
                 if self._logging:
+                    print('hello, world')
                     summary, _ = self._sess.run([self.summary, self._train_op], feed_dict=feed_dict)
                     self.train_writer.add_summary(summary)
-
                 self._sess.run(self._train_op, feed_dict=feed_dict)
+                _emb = self._sess.run(self.emb, feed_dict=feed_dict)
+
             if self.verbouse:
                 self.eval_conll('valid', print_results=True)
             self.save()
@@ -289,7 +314,9 @@ class NER:
         y_pred_list = list()
         print('Eval on {}:'.format(dataset_type))
         # gt for ground truth
-        for x, y_gt in self.corpus.batch_generator(batch_size=32, dataset_type=dataset_type):
+        for x, y_gt in self.corpus.batch_generator(batch_size=64,
+                                                   dataset_type=dataset_type,
+                                                   allow_smaller_last_batch=False):
             y_pred = self.predict(x)
             y_gt = self.corpus.tag_dict.batch_idxs2batch_toks(y_gt, filter_paddings=True)
             for tags_pred, tags_gt in zip(y_pred, y_gt):
@@ -384,11 +411,12 @@ class NER:
         # For batch norm it is necessary to update running averages
         extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
         with tf.control_dependencies(extra_update_ops):
-            train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss, global_step=global_step, var_list=variables)
+            with tf.variable_scope('adam_crutch_for_rove'):
+                train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss, global_step=global_step, var_list=variables)
         return train_op
 
     def predict_for_token_batch(self, tokens_batch):
-        batch_x, _ = self.corpus.tokens_batch_to_numpy_batch(tokens_batch)
+        batch_x, _ = self.corpus.preprocess_batch(tokens_batch)
         # Prediction indices
         predictions_batch = self.predict(batch_x)
         predictions_batch_no_pad = list()
