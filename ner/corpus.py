@@ -345,9 +345,9 @@ class Corpus:
             x['emb'] = np.zeros([batch_size, max_utt_len, self.embeddings.vector_size], dtype=np.float32)
 
         if self.is_rove:
-            x['token'] = np.zeros([batch_size, max_utt_len, 7 * len(self.rove_vocab)])
-        else:
-            x['token'] = np.ones([batch_size, max_utt_len], dtype=np.int32) * self.token_dict['<PAD>']
+            x['BME'] = np.zeros([batch_size, max_utt_len, 7 * len(self.rove_vocab)])
+
+        x['token'] = np.ones([batch_size, max_utt_len], dtype=np.int32) * self.token_dict['<PAD>']
         x['char'] = np.ones([batch_size, max_utt_len, max_token_len], dtype=np.int32) * self.char_dict['<PAD>']
 
         # Capitalization
@@ -379,9 +379,10 @@ class Corpus:
                 utterance = [u[:u.rfind('_')] for u in utterance]
 
             if self.is_rove:
-                toks = [self.letters2vec(w) for w in utterance]
-            else:
-                toks = self.token_dict.toks2idxs(utterance)
+                bmes = [self.letters2vec(w) for w in utterance]
+                x['BME'][n, :len(utterance)] = bmes
+
+            toks = self.token_dict.toks2idxs(utterance)
             x['token'][n, :len(utterance)] = toks
             for k, token in enumerate(utterance):
                 x['char'][n, k, :len(token)] = self.char_dict.toks2idxs(token)

@@ -9,7 +9,7 @@ import pandas as pd
 from ner.corpus import Corpus
 from ner.network import NER
 
-os.environ['CUDA_VISIBLE_DEVICES'] = ''
+# os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
 formatter = logging.Formatter(
     '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
@@ -30,6 +30,7 @@ logger.setLevel('DEBUG')
 time_total = time()
 
 
+N_TRAINS = 10
 NOISE_LEVELS = np.concatenate([np.arange(0.05, 0.2, 0.01), np.arange(0, 0.05, 0.005)])
 
 parser = argparse.ArgumentParser()
@@ -131,48 +132,48 @@ if __name__ == '__main__':
 
     results_all = []
 
-    for noise_level in NOISE_LEVELS:
-        logging.info('Starting training for noise level %s' % noise_level)
-        corp.noise_level = noise_level
+    for _ in range(N_TRAINS):
+        for noise_level in NOISE_LEVELS:
+            logging.info('Starting training for noise level %s' % noise_level)
+            corp.noise_level = noise_level
 
-        network_type = 'cnn' if args.network_type == 'cnn' else 'rnn'
-        if network_type == 'rnn':
-            cell_type = args.network_type
-        else:
-            cell_type = None
+            network_type = 'cnn' if args.network_type == 'cnn' else 'rnn'
+            if network_type == 'rnn':
+                cell_type = args.network_type
+            else:
+                cell_type = None
 
-        model_params = {"filter_width": 7,
-                        "embeddings_dropout": True,
-                        "n_filters": [
-                            128, 128,
-                        ],
-                        "token_embeddings_dim": 300,
-                        "use_char_embeddins": not args.no_char_embeddings,
-                        "char_embeddings_type": args.char_embeddings_type,
-                        "char_embeddings_dim": 25,
-                        "use_batch_norm": True,
-                        "use_crf": True,
-                        "net_type": network_type,
-                        "cell_type": cell_type,
-                        "use_capitalization": False,
-                        "logging": False,
-                        "trainable_embeddings": not args.not_trainable_embeddings,
-                        "rove_embeddings": rove_path is not None,
-                        "rove_path": rove_path}
+            model_params = {"filter_width": 7,
+                            "embeddings_dropout": True,
+                            "n_filters": [
+                                128, 128,
+                            ],
+                            "token_embeddings_dim": 300,
+                            "use_char_embeddins": not args.no_char_embeddings,
+                            "char_embeddings_type": args.char_embeddings_type,
+                            "char_embeddings_dim": 25,
+                            "use_batch_norm": True,
+                            "use_crf": True,
+                            "net_type": network_type,
+                            "cell_type": cell_type,
+                            "use_capitalization": False,
+                            "logging": False,
+                            "trainable_embeddings": not args.not_trainable_embeddings,
+                            "rove_embeddings": rove_path is not None,
+                            "rove_path": rove_path}
 
-        net = NER(corp, **model_params)
+            net = NER(corp, **model_params)
 
-        learning_params = {'dropout_rate': args.dropout,
-                           'epochs': args.epochs,
-                           'learning_rate': 0.005,
-                           'batch_size': 64,
-                           'learning_rate_decay': 0.707,
-                           'allow_smaller_last_batch': False}
+            learning_params = {'dropout_rate': args.dropout,
+                            'epochs': args.epochs,
+                            'learning_rate': 0.005,
+                            'batch_size': 64,
+                            'learning_rate_decay': 0.707,
+                            'allow_smaller_last_batch': False}
 
-        results = net.fit(**learning_params)
+            results = net.fit(**learning_params)
 
-        logging.info('Evaluating the model..')
-        for _ in range(10):
+            logging.info('Evaluating the model..')
             results_dict = {'noise_level': noise_level}
             results_dict.update(model_params)
             results_dict.update(learning_params)
@@ -184,7 +185,7 @@ if __name__ == '__main__':
             results_dict.update({'clean_' + k: v for k, v in results['__total__'].items()})
 
             results_all.append(results_dict)
-        logging.info('Saving results...')
-        pd.DataFrame(results_all).to_csv(args.results_filename)
+            logging.info('Saving results...')
+            pd.DataFrame(results_all).to_csv(args.results_filename)
 
     logging.info('Total execution time: %s min' % ((time() - time_total) // 60))

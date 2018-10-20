@@ -67,23 +67,21 @@ class NER:
                               corpus.embeddings is not None and \
                               not isinstance(corpus.embeddings, dict)
 
-        if rove_embeddings:
-            assert embeddings_onethego ^ rove_embeddings
-            assert rove_embeddings ^ (rove_path is None)
-
         # Create placeholders
         if embeddings_onethego:
             x_word = tf.placeholder(dtype=tf.float32, shape=[None, None, corpus.embeddings.vector_size], name='x_word')
-        elif rove_embeddings:
+        else:
+            x_word = tf.placeholder(dtype=tf.int32, shape=[None, None], name='x_word')
+
+        if rove_embeddings:
             ckpt = tf.train.get_checkpoint_state(rove_path)
+            self.rove_ckpt = ckpt
             graph = tf.get_default_graph()
             self.rove_saver = tf.train.import_meta_graph(ckpt.model_checkpoint_path+'.meta')
             rove_input = graph.get_tensor_by_name('input:0')
-            x_word = rove_input
+            self.rove_input = rove_input
             rove_output = graph.get_tensor_by_name('target:0')
             tf.stop_gradient(rove_output)
-        else:
-            x_word = tf.placeholder(dtype=tf.int32, shape=[None, None], name='x_word')
 
         if concat_embeddings:
             x_emb = tf.placeholder(dtype=tf.float32, shape=[None, None, corpus.embeddings.vector_size], name='x_word')
@@ -101,13 +99,13 @@ class NER:
         # Embeddings
         if not embeddings_onethego:
             with tf.variable_scope('Embeddings'):
+                w_emb = embedding_layer(x_word,
+                                        n_tokens=n_tokens,
+                                        token_embedding_dim=token_embeddings_dim,
+                                        trainable=self.trainable_embeddings)
+
                 if rove_embeddings:
-                    w_emb = rove_output
-                else:
-                    w_emb = embedding_layer(x_word,
-                                            n_tokens=n_tokens,
-                                            token_embedding_dim=token_embeddings_dim,
-                                            trainable=self.trainable_embeddings)
+                    w_emb = tf.concat([w_emb, rove_output], axis=-1)
                 if use_char_embeddins:
                     # Character embeddings
                     c_emb = character_embedding_network(x_char,
@@ -202,6 +200,8 @@ class NER:
 
         self._loss = loss
         self._sess = sess
+        if self.rove_embeddings:
+            self.rove_saver.restore(self._sess, self.rove_ckpt.model_checkpoint_path)
         self.corpus = corpus
 
         self._loss_tensor = loss_tensor
@@ -345,6 +345,8 @@ class NER:
             feed_dict[self._x_w] = x['token']
         feed_dict[self._x_c] = x['char']
         feed_dict[self._mask] = x['mask']
+        if self.rove_embeddings:
+            feed_dict[self.rove_input] = x['BME']
         feed_dict[self._training_ph] = training
         if y_t is not None:
             feed_dict[self._y_true] = y_t
